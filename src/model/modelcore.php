@@ -8,8 +8,8 @@ class ModelCore {
     
 
     public function __construct() {
-        $this->db = new db();
-        $this->db = $this->db->connect();
+        $conn = new db();
+        $this->db = $conn->getConnection();
     }
 
     public function getAll(){
