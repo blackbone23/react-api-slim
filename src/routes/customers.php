@@ -17,10 +17,10 @@ $app->get('/api/customers', function(Request $request, Response $response){
         $stmt = $db->query($sql);
         $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
         $db = null;
-        echo json_encode($customers);
+        return $response->withJson($customers, 200);
 
     } catch(PDOException $e) {
-        echo '{"error": {"text" : '.$e->getMessage().'}}';
+        return '{"error": {"text" : '.$e->getMessage().'}, "status": 404}';
     }
 });
 
@@ -40,10 +40,10 @@ $app->get('/api/customer/{id}', function(Request $request, Response $response){
         $stmt = $db->query($sql);
         $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
         $db = null;
-        echo json_encode($customers);
+        return $response->withJson($customers, 200);
 
     } catch(PDOException $e) {
-        echo '{"error": {"text" : '.$e->getMessage().'}}';
+        return '{"error": {"text" : '.$e->getMessage().'}, "status": 404}';
     }
 });
 
@@ -78,7 +78,12 @@ $app->post('/api/customer/add', function(Request $request, Response $response){
 
         $stmt->execute();
 
-        echo '{"notice" : {"text" : "Customer Added"}}';
+        $data_ress = array(
+            "notice" => array(
+                "text" => "Customer Added"
+            )
+        );
+        return $response->withJson($data_ress, 200);
 
     } catch(PDOException $e) {
         echo '{"error": {"text" : '.$e->getMessage().'}}';
@@ -125,7 +130,12 @@ $app->put('/api/customer/{id}', function(Request $request, Response $response){
 
         $stmt->execute();
 
-        echo '{"notice" : {"text" : "Customer Updated"}}';
+        $data_ress = array(
+            "notice" => array(
+                "text" => "Customer Added"
+            )
+        );
+        return $response->withJson($data_ress, 200);
 
     } catch(PDOException $e) {
         echo '{"error": {"text" : '.$e->getMessage().'}}';
@@ -148,7 +158,13 @@ $app->delete('/api/customer/{id}', function(Request $request, Response $response
         $stmt = $db->prepare($sql);
         $stmt->execute();
         $db = null;
-        echo '{"notice" : {"text" : "Customer Deleted"}}';
+        
+        $data_ress = array(
+            "notice" => array(
+                "text" => "Customer Deleted"
+            )
+        );
+        return $response->withJson($data_ress, 200);
 
     } catch(PDOException $e) {
         echo '{"error": {"text" : '.$e->getMessage().'}}';
