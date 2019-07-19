@@ -51,40 +51,68 @@ class ModelCore {
 
         $key_pdo_string = implode(',',$keys_pdo);
 
+        $sql = "INSERT INTO $this->table_name ($key_string) VALUES ($key_pdo_string)";
 
-
-        $sql = "INSERT INTO customers ($key_string) VALUES ($key_pdo_string)";
-
-        // var_dump($sql);
-
-        // var_dump($sql);
 
         try {
-            // var_dump($params);
             $stmt = $this->db->prepare($sql);
-            $exe_arr = [];
-            foreach($params as $key=>$value) {
+            foreach($params as $key => &$value) {
                 $key = ':'.$key;
-                $exe_arr[$key] = $value;
+                $stmt->bindParam($key, $value);
             }
+            $result = $stmt->execute();
 
-            // $exe_string = implode(',', $params);
-
-        //     $stmt->bindParam(':first_name', $first_name);
-        //     $stmt->bindParam(':last_name', $last_name);
-        //     $stmt->bindParam(':phone', $phone);
-        //     $stmt->bindParam(':email', $email);
-        //     $stmt->bindParam(':address', $address);
-        //     $stmt->bindParam(':city', $city);
-        //     $stmt->bindParam(':state', $state);
-
-            // $result = $stmt->execute();
-
-            print_r($exe_arr);
-            die();
-            $datalist = $stmt->fetchAll(PDO::FETCH_OBJ);
-            return $datalist;
+            return $result;
     
+        } catch(PDOException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function update($params, $id){
+        $sets = [];
+        foreach($params as $key=>$value) {
+            $set_part = $key.' = :'.$key;
+            array_push($sets, $set_part);
+        }
+
+        $set_string = implode(', ',$sets);
+
+        $sql = "UPDATE $this->table_name SET
+                $set_string
+            WHERE id = $id";
+        
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            foreach($params as $key => &$value) {
+                $key = ':'.$key;
+                $stmt->bindParam($key, $value);
+            }
+            $stmt->execute();
+
+            $result = $stmt->rowCount();
+
+            return $result;
+    
+        } catch(PDOException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function delete($id){
+
+        $sql = "DELETE FROM $this->table_name WHERE id = $id";
+
+        try {
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            
+            $result = $stmt->rowCount();
+
+            return $result;
+
         } catch(PDOException $e) {
             return $e->getMessage();
         }

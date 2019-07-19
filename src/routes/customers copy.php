@@ -136,7 +136,7 @@ $app->put('/api/customer/{id}', function(Request $request, Response $response){
 
         $data_ress = array(
             "notice" => array(
-                "text" => "Customer Added"
+                "text" => "Customer Updated"
             )
         );
         return $response->withJson($data_ress, 200);
